@@ -1,0 +1,61 @@
+. Key Features 
+i. 
+ii. 
+iii. 
+iv. 
+Candidate Application 
+• User registration and secure authentication 
+• Resume upload supporting PDF and DOCX formats 
+• Automated profile creation using AI-extracted data 
+• Personalized job and institute recommendations 
+• Application tracking and status updates 
+• Profile management and skill visibility 
+Resume Parsing & Skill Extraction Engine 
+• Text extraction from unstructured resume documents 
+• Named Entity Recognition (NER) for skills, education, and experience 
+• Semantic understanding of technical and pedagogical skills 
+• Skill classification into technical, soft, and academic categories 
+• Structured data conversion into machine-readable format (JSON) 
+Organization Recruiter Portal 
+• Institute onboarding and verification 
+• Requirement posting for subjects, roles, and experience levels 
+• Intelligent candidate filtering using AI-generated skill tags 
+• Automated candidate ranking based on match score 
+• Digital faculty and talent database for future hiring 
+Gap Analysis & Skill Recommendation 
+• Feature: Career Roadmap generator. 
+• Functionality: 
+• Analyzes a candidate’s resume against a desired role. 
+• Identifies missing skills needed for higher job match percentage. 
+• Provides actionable skill recommendations to improve candidacy. 
+© Project Management Office   
+5  
+Faculty of Computing & IT, International Institute of Science, Art and Technology (IISAT) University.  
+• Innovation: Transforms the platform into a career counselor, not just a job 
+portal. 
+v. 
+Admin Panel 
+• System-wide user and institute management 
+• Verification of candidates and educational institutions 
+• AI-based matching algorithm management 
+• Semantic mapping for skill synonym recognition 
+• Platform analytics and performance monitoring 
+7. Main Module 
+We have designed a four-module system to ensure accuracy and scalability 
+i. 
+ii. 
+iii. 
+iv. 
+Candidate Module 
+➢ Resume upload and AI-based profile generation 
+➢ Skill visibility and application tracking 
+Resume Parsing & Skill Engine 
+➢ NLP-based text extraction and entity recognition 
+➢ Provides personalized job and institute suggestions along with AI-based 
+skill improvement. 
+Organization Recruiter Module 
+➢ Requirement posting and intelligent candidate filtering 
+➢ Faculty Matrix-based talent management 
+Admin Module 
+➢ User and institute verification 
+➢ AI matching control, analytics, and system monitoring
