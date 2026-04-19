@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Calendar, Clock, FileText } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -15,59 +15,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
 const APPLICATIONS = [
-  {
-    id: "1",
-    uni: "Stanford University",
-    role: "Assistant Professor",
-    dept: "Computer Science",
-    appliedDate: "Apr 12, 2026",
-    status: "Under Review",
-    statusColor: "#f59e0b",
-    statusBg: "#fffbeb",
-    initials: "SU",
-    color: "#dc2626",
-    match: 94,
-  },
-  {
-    id: "2",
-    uni: "MIT",
-    role: "Associate Professor",
-    dept: "AI & ML",
-    appliedDate: "Apr 8, 2026",
-    status: "Interview Scheduled",
-    statusColor: "#10b981",
-    statusBg: "#f0fdf4",
-    initials: "MI",
-    color: "#7c3aed",
-    match: 91,
-    interviewDate: "Apr 22, 2026",
-  },
-  {
-    id: "3",
-    uni: "LUMS",
-    role: "Visiting Lecturer",
-    dept: "Data Science",
-    appliedDate: "Mar 30, 2026",
-    status: "Submitted",
-    statusColor: "#3b82f6",
-    statusBg: "#eff6ff",
-    initials: "LU",
-    color: "#0369a1",
-    match: 78,
-  },
-  {
-    id: "4",
-    uni: "IISAT University",
-    role: "Senior Lecturer",
-    dept: "Software Engineering",
-    appliedDate: "Mar 22, 2026",
-    status: "Rejected",
-    statusColor: "#ef4444",
-    statusBg: "#fef2f2",
-    initials: "II",
-    color: "#6b7280",
-    match: 65,
-  },
+  { id: "1", uni: "Stanford University", role: "Assistant Professor", dept: "Computer Science", appliedDate: "Apr 12, 2026", status: "Under Review", statusColor: "#f59e0b", statusBg: "#fffbeb", initials: "SU", color: "#dc2626", match: 94 },
+  { id: "2", uni: "MIT", role: "Associate Professor", dept: "AI & ML", appliedDate: "Apr 8, 2026", status: "Interview Scheduled", statusColor: "#10b981", statusBg: "#f0fdf4", initials: "MI", color: "#7c3aed", match: 91, interviewDate: "Apr 22, 2026" },
+  { id: "3", uni: "LUMS", role: "Visiting Lecturer", dept: "Data Science", appliedDate: "Mar 30, 2026", status: "Submitted", statusColor: "#3b82f6", statusBg: "#eff6ff", initials: "LU", color: "#0369a1", match: 78 },
+  { id: "4", uni: "IISAT University", role: "Senior Lecturer", dept: "Software Engineering", appliedDate: "Mar 22, 2026", status: "Rejected", statusColor: "#ef4444", statusBg: "#fef2f2", initials: "II", color: "#6b7280", match: 65 },
 ];
 
 const STATUS_TABS = ["All", "Active", "Interview", "Closed"];
@@ -92,8 +43,6 @@ export default function ApplicationsScreen() {
         <View style={styles.headerDecor} />
         <Text style={styles.headerTitle}>My Applications</Text>
         <Text style={styles.headerSub}>Track your application progress</Text>
-
-        {/* Stats row */}
         <View style={styles.statsRow}>
           {[
             { label: "Total", value: "4", bg: "rgba(255,255,255,0.15)" },
@@ -108,7 +57,6 @@ export default function ApplicationsScreen() {
         </View>
       </LinearGradient>
 
-      {/* Tabs */}
       <View style={[styles.tabs, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         {STATUS_TABS.map((t) => (
           <Pressable key={t} style={[styles.tab, activeTab === t && styles.tabActive]} onPress={() => setActiveTab(t)}>
@@ -126,11 +74,10 @@ export default function ApplicationsScreen() {
           <View style={[styles.appCard, { backgroundColor: colors.card }]}>
             {app.status === "Interview Scheduled" && (
               <View style={styles.interviewBanner}>
-                <Ionicons name="calendar-outline" size={12} color="#10b981" />
-                <Text style={styles.interviewBannerText}>Interview on {app.interviewDate}</Text>
+                <Calendar size={12} color="#10b981" />
+                <Text style={styles.interviewBannerText}>Interview on {(app as any).interviewDate}</Text>
               </View>
             )}
-
             <View style={styles.appTop}>
               <View style={[styles.appAvatar, { backgroundColor: app.color + "18" }]}>
                 <Text style={[styles.appAvatarText, { color: app.color }]}>{app.initials}</Text>
@@ -144,37 +91,26 @@ export default function ApplicationsScreen() {
                 <Text style={[styles.statusText, { color: app.statusColor }]}>{app.status}</Text>
               </View>
             </View>
-
             <View style={styles.appFooter}>
               <View style={styles.footerLeft}>
-                <Ionicons name="time-outline" size={12} color={colors.mutedForeground} />
+                <Clock size={12} color={colors.mutedForeground} />
                 <Text style={[styles.footerText, { color: colors.mutedForeground }]}>Applied {app.appliedDate}</Text>
               </View>
               <View style={styles.matchPill}>
                 <Text style={styles.matchText}>{app.match}% match</Text>
               </View>
             </View>
-
-            {/* Timeline */}
             <View style={styles.timeline}>
               {["Submitted", "Under Review", "Interview", "Decision"].map((step, i) => {
-                const activeIndex =
-                  app.status === "Submitted" ? 0 :
-                  app.status === "Under Review" ? 1 :
-                  app.status === "Interview Scheduled" ? 2 :
-                  app.status === "Rejected" ? 1 : 0;
+                const activeIndex = app.status === "Submitted" ? 0 : app.status === "Under Review" ? 1 : app.status === "Interview Scheduled" ? 2 : app.status === "Rejected" ? 1 : 0;
                 const done = i <= activeIndex;
                 return (
                   <React.Fragment key={step}>
                     <View style={styles.timelineStep}>
                       <View style={[styles.timelineDot, done ? styles.timelineDotDone : styles.timelineDotPending]} />
-                      <Text style={[styles.timelineLabel, { color: done ? "#7c3aed" : colors.mutedForeground }]} numberOfLines={1}>
-                        {step}
-                      </Text>
+                      <Text style={[styles.timelineLabel, { color: done ? "#7c3aed" : colors.mutedForeground }]} numberOfLines={1}>{step}</Text>
                     </View>
-                    {i < 3 && (
-                      <View style={[styles.timelineLine, { backgroundColor: done && i < activeIndex ? "#7c3aed" : "#e5e0f8" }]} />
-                    )}
+                    {i < 3 && <View style={[styles.timelineLine, { backgroundColor: done && i < activeIndex ? "#7c3aed" : "#e5e0f8" }]} />}
                   </React.Fragment>
                 );
               })}
@@ -183,7 +119,7 @@ export default function ApplicationsScreen() {
         )}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Ionicons name="document-text-outline" size={40} color="#c4b5fd" />
+            <FileText size={40} color="#c4b5fd" />
             <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>No applications here</Text>
             <Text style={[styles.emptySubText, { color: colors.mutedForeground }]}>Apply to jobs to track them here</Text>
           </View>
@@ -209,25 +145,8 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 13, fontFamily: "Inter_600SemiBold", color: "#8b7dc0" },
   tabTextActive: { color: "#7c3aed" },
   list: { padding: 16, gap: 12 },
-  appCard: {
-    borderRadius: 18,
-    padding: 16,
-    shadowColor: "#1e1b4b",
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-  },
-  interviewBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "#f0fdf4",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginBottom: 12,
-  },
+  appCard: { borderRadius: 18, padding: 16, shadowColor: "#1e1b4b", shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 3 }, elevation: 3 },
+  interviewBanner: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#f0fdf4", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, marginBottom: 12 },
   interviewBannerText: { fontSize: 11, fontFamily: "Inter_600SemiBold", color: "#10b981" },
   appTop: { flexDirection: "row", gap: 12, marginBottom: 12 },
   appAvatar: { width: 44, height: 44, borderRadius: 14, alignItems: "center", justifyContent: "center", flexShrink: 0 },

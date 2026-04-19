@@ -1,7 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import {
+  AlertCircle,
+  BookOpen,
+  Briefcase,
+  Check,
+  CheckCircle,
+  ChevronLeft,
+  Code2,
+  FileUp,
+  GraduationCap,
+  Lightbulb,
+  School,
+  Sparkles,
+  Upload,
+} from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -41,18 +55,11 @@ export default function ResumeUploadScreen() {
 
   useEffect(() => {
     if (step === "analyzing") {
-      Animated.loop(
-        Animated.timing(spinAnim, { toValue: 1, duration: 1200, useNativeDriver: true })
-      ).start();
-
+      Animated.loop(Animated.timing(spinAnim, { toValue: 1, duration: 1200, useNativeDriver: true })).start();
       let prog = 0;
       const interval = setInterval(() => {
         prog += Math.random() * 18 + 8;
-        if (prog >= 100) {
-          prog = 100;
-          clearInterval(interval);
-          setTimeout(() => setStep("result"), 600);
-        }
+        if (prog >= 100) { prog = 100; clearInterval(interval); setTimeout(() => setStep("result"), 600); }
         setProgress(Math.min(prog, 100));
         Animated.timing(progressAnim, { toValue: prog / 100, duration: 400, useNativeDriver: false }).start();
       }, 500);
@@ -68,14 +75,20 @@ export default function ResumeUploadScreen() {
   const spin = spinAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
   const progressWidth = progressAnim.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] });
 
+  const TASKS = [
+    { label: "Scanning document structure...", done: progress > 20 },
+    { label: "Extracting skills & experience...", done: progress > 50 },
+    { label: "Running semantic analysis...", done: progress > 75 },
+    { label: "Building your profile...", done: progress >= 100 },
+  ];
+
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={[styles.header, { paddingTop: topInset + 12 }]}>
         <View style={styles.headerDecor} />
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={22} color="rgba(196,181,253,0.9)" />
+            <ChevronLeft size={22} color="rgba(196,181,253,0.9)" />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Resume Upload</Text>
@@ -83,28 +96,17 @@ export default function ResumeUploadScreen() {
           </View>
           <View style={{ width: 36 }} />
         </View>
-
-        {/* Steps indicator */}
         <View style={styles.stepsRow}>
-          {[
-            { key: "upload", label: "Upload" },
-            { key: "analyzing", label: "Analysis" },
-            { key: "result", label: "Profile" },
-          ].map((s, i) => {
-            const done = (s.key === "upload" && (step === "analyzing" || step === "result")) ||
-              (s.key === "analyzing" && step === "result") ||
-              s.key === step;
+          {[{ key: "upload", label: "Upload" }, { key: "analyzing", label: "Analysis" }, { key: "result", label: "Profile" }].map((s, i) => {
+            const completed = (s.key === "upload" && (step === "analyzing" || step === "result")) || (s.key === "analyzing" && step === "result");
+            const active = s.key === step;
             return (
               <React.Fragment key={s.key}>
                 <View style={styles.stepItem}>
-                  <View style={[styles.stepCircle, done && styles.stepCircleDone]}>
-                    {(s.key === "upload" && (step === "analyzing" || step === "result")) || (s.key === "analyzing" && step === "result") ? (
-                      <Ionicons name="checkmark" size={12} color="#fff" />
-                    ) : (
-                      <Text style={[styles.stepNum, done && styles.stepNumDone]}>{i + 1}</Text>
-                    )}
+                  <View style={[styles.stepCircle, (completed || active) && styles.stepCircleDone]}>
+                    {completed ? <Check size={12} color="#fff" /> : <Text style={[styles.stepNum, (completed || active) && styles.stepNumDone]}>{i + 1}</Text>}
                   </View>
-                  <Text style={[styles.stepLabel, done && styles.stepLabelDone]}>{s.label}</Text>
+                  <Text style={[styles.stepLabel, (completed || active) && styles.stepLabelDone]}>{s.label}</Text>
                 </View>
                 {i < 2 && <View style={[styles.stepLine, (step !== "upload" && i === 0) || (step === "result" && i === 1) ? styles.stepLineDone : {}]} />}
               </React.Fragment>
@@ -113,43 +115,29 @@ export default function ResumeUploadScreen() {
         </View>
       </LinearGradient>
 
-      {/* Content */}
       {step === "upload" && (
         <ScrollView contentContainerStyle={[styles.uploadContent, { paddingBottom: bottomInset + 24 }]} showsVerticalScrollIndicator={false}>
           <View style={[styles.uploadZone, { borderColor: colors.border, backgroundColor: colors.card }]}>
-            <View style={styles.uploadIconWrap}>
-              <LinearGradient colors={["#f0eeff", "#ede9fe"]} style={styles.uploadIconBg}>
-                <Ionicons name="cloud-upload-outline" size={40} color="#7c3aed" />
-              </LinearGradient>
-            </View>
+            <LinearGradient colors={["#f0eeff", "#ede9fe"]} style={styles.uploadIconBg}>
+              <Upload size={40} color="#7c3aed" />
+            </LinearGradient>
             <Text style={[styles.uploadTitle, { color: colors.foreground }]}>Upload Your Resume</Text>
-            <Text style={[styles.uploadSub, { color: colors.mutedForeground }]}>
-              Supports PDF and DOCX formats{"\n"}up to 10MB
-            </Text>
+            <Text style={[styles.uploadSub, { color: colors.mutedForeground }]}>Supports PDF and DOCX formats{"\n"}up to 10MB</Text>
             <View style={styles.formatBadges}>
               {["PDF", "DOCX"].map((f) => (
-                <View key={f} style={styles.formatBadge}>
-                  <Text style={styles.formatBadgeText}>{f}</Text>
-                </View>
+                <View key={f} style={styles.formatBadge}><Text style={styles.formatBadgeText}>{f}</Text></View>
               ))}
             </View>
           </View>
-
-          <Pressable
-            style={({ pressed }) => [styles.uploadBtn, pressed && { opacity: 0.88 }]}
-            onPress={handleUpload}
-          >
+          <Pressable style={({ pressed }) => [styles.uploadBtn, pressed && { opacity: 0.88 }]} onPress={handleUpload}>
             <LinearGradient colors={["#7c3aed", "#6d28d9"]} style={styles.uploadBtnGradient}>
-              <Ionicons name="document-attach-outline" size={18} color="#fff" />
+              <FileUp size={18} color="#fff" />
               <Text style={styles.uploadBtnText}>Select File</Text>
             </LinearGradient>
           </Pressable>
-
           <View style={[styles.tip, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
-            <Text style={[styles.tipText, { color: colors.mutedForeground }]}>
-              AI will extract your skills, education, and experience automatically
-            </Text>
+            <Lightbulb size={18} color="#f59e0b" />
+            <Text style={[styles.tipText, { color: colors.mutedForeground }]}>AI will extract your skills, education, and experience automatically</Text>
           </View>
         </ScrollView>
       )}
@@ -159,33 +147,20 @@ export default function ResumeUploadScreen() {
           <View style={styles.analyzeCard}>
             <Animated.View style={{ transform: [{ rotate: spin }] }}>
               <LinearGradient colors={["#7c3aed", "#a855f7"]} style={styles.spinnerGradient}>
-                <Ionicons name="sparkles" size={28} color="#fff" />
+                <Sparkles size={28} color="#fff" />
               </LinearGradient>
             </Animated.View>
             <Text style={[styles.analyzeTitle, { color: colors.foreground }]}>AI is Analyzing...</Text>
-            <Text style={[styles.analyzeSub, { color: colors.mutedForeground }]}>
-              Extracting skills, education, and experience from your resume
-            </Text>
-
+            <Text style={[styles.analyzeSub, { color: colors.mutedForeground }]}>Extracting skills, education, and experience from your resume</Text>
             <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
               <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
             </View>
-            <Text style={[styles.progressText, { color: colors.mutedForeground }]}>
-              {Math.round(progress)}% complete
-            </Text>
-
-            {[
-              { label: "Scanning document structure...", done: progress > 20 },
-              { label: "Extracting skills & experience...", done: progress > 50 },
-              { label: "Running semantic analysis...", done: progress > 75 },
-              { label: "Building your profile...", done: progress >= 100 },
-            ].map((task) => (
+            <Text style={[styles.progressText, { color: colors.mutedForeground }]}>{Math.round(progress)}% complete</Text>
+            {TASKS.map((task) => (
               <View key={task.label} style={styles.taskRow}>
                 <View style={[styles.taskDot, task.done && styles.taskDotDone]} />
-                <Text style={[styles.taskText, { color: task.done ? "#7c3aed" : colors.mutedForeground }]}>
-                  {task.label}
-                </Text>
-                {task.done && <Ionicons name="checkmark-circle" size={14} color="#10b981" />}
+                <Text style={[styles.taskText, { color: task.done ? "#7c3aed" : colors.mutedForeground }]}>{task.label}</Text>
+                {task.done && <CheckCircle size={14} color="#10b981" />}
               </View>
             ))}
           </View>
@@ -195,75 +170,46 @@ export default function ResumeUploadScreen() {
       {step === "result" && (
         <ScrollView contentContainerStyle={[styles.resultContent, { paddingBottom: bottomInset + 24 }]} showsVerticalScrollIndicator={false}>
           <View style={[styles.successBanner, { backgroundColor: "#f0fdf4" }]}>
-            <Ionicons name="checkmark-circle" size={22} color="#10b981" />
+            <CheckCircle size={22} color="#10b981" />
             <Text style={styles.successText}>Profile extracted successfully!</Text>
           </View>
-
-          {/* Skills */}
           <View style={[styles.resultSection, { backgroundColor: colors.card }]}>
             <View style={styles.resultSectionHeader}>
-              <Ionicons name="code-slash" size={16} color="#7c3aed" />
+              <Code2 size={16} color="#7c3aed" />
               <Text style={[styles.resultSectionTitle, { color: colors.foreground }]}>Extracted Skills</Text>
-              <View style={styles.countBadge}>
-                <Text style={styles.countBadgeText}>{EXTRACTED_SKILLS.length}</Text>
-              </View>
+              <View style={styles.countBadge}><Text style={styles.countBadgeText}>{EXTRACTED_SKILLS.length}</Text></View>
             </View>
             <View style={styles.skillsWrap}>
-              {EXTRACTED_SKILLS.map((s) => (
-                <View key={s} style={styles.skillPill}>
-                  <Text style={styles.skillText}>{s}</Text>
-                </View>
-              ))}
+              {EXTRACTED_SKILLS.map((s) => <View key={s} style={styles.skillPill}><Text style={styles.skillText}>{s}</Text></View>)}
             </View>
           </View>
-
-          {/* Education */}
           <View style={[styles.resultSection, { backgroundColor: colors.card }]}>
             <View style={styles.resultSectionHeader}>
-              <Ionicons name="school" size={16} color="#3b82f6" />
+              <GraduationCap size={16} color="#3b82f6" />
               <Text style={[styles.resultSectionTitle, { color: colors.foreground }]}>Education</Text>
             </View>
             {EDUCATION.map((e) => (
               <View key={e.degree} style={[styles.eduItem, { borderColor: colors.border }]}>
-                <View style={[styles.eduIcon, { backgroundColor: "#eff6ff" }]}>
-                  <Ionicons name="school-outline" size={16} color="#3b82f6" />
-                </View>
-                <View>
-                  <Text style={[styles.eduDegree, { color: colors.foreground }]}>{e.degree}</Text>
-                  <Text style={[styles.eduUni, { color: colors.mutedForeground }]}>{e.uni} · {e.year}</Text>
-                </View>
+                <View style={[styles.eduIcon, { backgroundColor: "#eff6ff" }]}><School size={16} color="#3b82f6" /></View>
+                <View><Text style={[styles.eduDegree, { color: colors.foreground }]}>{e.degree}</Text><Text style={[styles.eduUni, { color: colors.mutedForeground }]}>{e.uni} · {e.year}</Text></View>
               </View>
             ))}
           </View>
-
-          {/* Experience */}
           <View style={[styles.resultSection, { backgroundColor: colors.card }]}>
             <View style={styles.resultSectionHeader}>
-              <Ionicons name="briefcase" size={16} color="#10b981" />
+              <Briefcase size={16} color="#10b981" />
               <Text style={[styles.resultSectionTitle, { color: colors.foreground }]}>Experience</Text>
             </View>
             {EXPERIENCE.map((e) => (
               <View key={e.role} style={[styles.eduItem, { borderColor: colors.border }]}>
-                <View style={[styles.eduIcon, { backgroundColor: "#f0fdf4" }]}>
-                  <Ionicons name="briefcase-outline" size={16} color="#10b981" />
-                </View>
-                <View>
-                  <Text style={[styles.eduDegree, { color: colors.foreground }]}>{e.role}</Text>
-                  <Text style={[styles.eduUni, { color: colors.mutedForeground }]}>{e.place} · {e.period}</Text>
-                </View>
+                <View style={[styles.eduIcon, { backgroundColor: "#f0fdf4" }]}><Briefcase size={16} color="#10b981" /></View>
+                <View><Text style={[styles.eduDegree, { color: colors.foreground }]}>{e.role}</Text><Text style={[styles.eduUni, { color: colors.mutedForeground }]}>{e.place} · {e.period}</Text></View>
               </View>
             ))}
           </View>
-
-          <Pressable
-            style={({ pressed }) => [styles.confirmBtn, pressed && { opacity: 0.88 }]}
-            onPress={() => {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              router.back();
-            }}
-          >
+          <Pressable style={({ pressed }) => [styles.confirmBtn, pressed && { opacity: 0.88 }]} onPress={() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); router.back(); }}>
             <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={styles.confirmGradient}>
-              <Ionicons name="checkmark-circle-outline" size={18} color="#fff" />
+              <CheckCircle size={18} color="#fff" />
               <Text style={styles.confirmText}>Confirm & Save Profile</Text>
             </LinearGradient>
           </Pressable>
@@ -294,8 +240,7 @@ const styles = StyleSheet.create({
   stepLineDone: { backgroundColor: "#7c3aed" },
   uploadContent: { padding: 20, gap: 16 },
   uploadZone: { borderRadius: 20, borderWidth: 2, borderStyle: "dashed", padding: 32, alignItems: "center", gap: 12 },
-  uploadIconWrap: { marginBottom: 4 },
-  uploadIconBg: { width: 80, height: 80, borderRadius: 40, alignItems: "center", justifyContent: "center" },
+  uploadIconBg: { width: 80, height: 80, borderRadius: 40, alignItems: "center", justifyContent: "center", marginBottom: 4 },
   uploadTitle: { fontSize: 18, fontFamily: "Inter_700Bold", textAlign: "center" },
   uploadSub: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center", lineHeight: 20 },
   formatBadges: { flexDirection: "row", gap: 8, marginTop: 4 },

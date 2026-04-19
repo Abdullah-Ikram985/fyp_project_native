@@ -1,7 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import {
+  AlertCircle,
+  ArrowRight,
+  BookOpen,
+  ChevronLeft,
+  Clock,
+  Laptop,
+  Rocket,
+  TrendingUp,
+} from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Platform,
@@ -30,39 +39,9 @@ const MISSING_SKILLS = [
 ];
 
 const COURSES = [
-  {
-    id: "1",
-    title: "Advanced TensorFlow & Keras",
-    platform: "Coursera",
-    duration: "6 weeks",
-    level: "Advanced",
-    skill: "TensorFlow Advanced",
-    icon: "school-outline",
-    color: "#3b82f6",
-    bg: "#eff6ff",
-  },
-  {
-    id: "2",
-    title: "Academic Research Writing",
-    platform: "edX",
-    duration: "4 weeks",
-    level: "Intermediate",
-    skill: "Research Publications",
-    icon: "document-text-outline",
-    color: "#10b981",
-    bg: "#f0fdf4",
-  },
-  {
-    id: "3",
-    title: "Grant Proposal Masterclass",
-    platform: "Udemy",
-    duration: "8 hours",
-    level: "Beginner",
-    skill: "Grant Writing",
-    icon: "cash-outline",
-    color: "#f59e0b",
-    bg: "#fffbeb",
-  },
+  { id: "1", title: "Advanced TensorFlow & Keras", platform: "Coursera", duration: "6 weeks", level: "Advanced", skill: "TensorFlow Advanced", color: "#3b82f6", bg: "#eff6ff" },
+  { id: "2", title: "Academic Research Writing", platform: "edX", duration: "4 weeks", level: "Intermediate", skill: "Research Publications", color: "#10b981", bg: "#f0fdf4" },
+  { id: "3", title: "Grant Proposal Masterclass", platform: "Udemy", duration: "8 hours", level: "Beginner", skill: "Grant Writing", color: "#f59e0b", bg: "#fffbeb" },
 ];
 
 export default function CareerRoadmapScreen() {
@@ -78,12 +57,11 @@ export default function CareerRoadmapScreen() {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={[styles.header, { paddingTop: topInset + 12 }]}>
         <View style={styles.headerDecor} />
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={22} color="rgba(196,181,253,0.9)" />
+            <ChevronLeft size={22} color="rgba(196,181,253,0.9)" />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Career Roadmap</Text>
@@ -91,56 +69,32 @@ export default function CareerRoadmapScreen() {
           </View>
           <View style={{ width: 36 }} />
         </View>
-
-        {/* Role selector */}
         <View style={styles.roleSelector}>
           <Text style={styles.roleSelectorLabel}>Target Role</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.roleChips}>
             {TARGET_ROLES.map((r, i) => (
-              <Pressable
-                key={i}
-                style={[styles.roleChip, selectedRole === i && styles.roleChipActive]}
-                onPress={() => {
-                  setSelectedRole(i);
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                }}
-              >
-                <Text style={[styles.roleChipText, selectedRole === i && styles.roleChipTextActive]}>
-                  {r.label}
-                </Text>
+              <Pressable key={i} style={[styles.roleChip, selectedRole === i && styles.roleChipActive]} onPress={() => { setSelectedRole(i); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}>
+                <Text style={[styles.roleChipText, selectedRole === i && styles.roleChipTextActive]}>{r.label}</Text>
               </Pressable>
             ))}
           </ScrollView>
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomInset + 100 }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Match Progress */}
+      <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomInset + 100 }]} showsVerticalScrollIndicator={false}>
         <View style={[styles.matchCard, { backgroundColor: colors.card }]}>
           <Text style={[styles.matchSummary, { color: colors.foreground }]}>
             You're <Text style={styles.matchPercent}>{currentMatch}% match</Text> — here's what to improve
           </Text>
-
           <View style={styles.progressSection}>
             <View style={styles.progressLabels}>
-              <View>
-                <Text style={[styles.progLabelSub, { color: colors.mutedForeground }]}>Current</Text>
-                <Text style={[styles.progLabelVal, { color: "#7c3aed" }]}>{currentMatch}%</Text>
-              </View>
+              <View><Text style={[styles.progLabelSub, { color: colors.mutedForeground }]}>Current</Text><Text style={[styles.progLabelVal, { color: "#7c3aed" }]}>{currentMatch}%</Text></View>
               <View style={styles.progArrow}>
-                <Ionicons name="arrow-forward" size={16} color={colors.mutedForeground} />
+                <ArrowRight size={16} color={colors.mutedForeground} />
                 <Text style={[styles.progGapText, { color: colors.mutedForeground }]}>+{gap}% needed</Text>
               </View>
-              <View style={{ alignItems: "flex-end" }}>
-                <Text style={[styles.progLabelSub, { color: colors.mutedForeground }]}>Target</Text>
-                <Text style={[styles.progLabelVal, { color: "#10b981" }]}>{targetMatch}%</Text>
-              </View>
+              <View style={{ alignItems: "flex-end" }}><Text style={[styles.progLabelSub, { color: colors.mutedForeground }]}>Target</Text><Text style={[styles.progLabelVal, { color: "#10b981" }]}>{targetMatch}%</Text></View>
             </View>
-
             <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
               <View style={[styles.progressBarFill, { width: `${currentMatch}%` as any }]} />
               <View style={[styles.targetMarker, { left: `${targetMatch}%` as any }]} />
@@ -148,11 +102,8 @@ export default function CareerRoadmapScreen() {
           </View>
         </View>
 
-        {/* Missing Skills */}
         <View style={styles.sectionHead}>
-          <View style={styles.sectionIconWrap}>
-            <Ionicons name="alert-circle" size={16} color="#ef4444" />
-          </View>
+          <View style={[styles.sectionIconWrap, { backgroundColor: "#fef2f2" }]}><AlertCircle size={16} color="#ef4444" /></View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Missing Skills</Text>
         </View>
 
@@ -172,11 +123,8 @@ export default function CareerRoadmapScreen() {
           })}
         </View>
 
-        {/* Recommended Courses */}
         <View style={styles.sectionHead}>
-          <View style={[styles.sectionIconWrap, { backgroundColor: "#f0eeff" }]}>
-            <Ionicons name="book" size={16} color="#7c3aed" />
-          </View>
+          <View style={[styles.sectionIconWrap, { backgroundColor: "#f0eeff" }]}><BookOpen size={16} color="#7c3aed" /></View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Recommended Courses</Text>
         </View>
 
@@ -184,43 +132,29 @@ export default function CareerRoadmapScreen() {
           {COURSES.map((course) => (
             <View key={course.id} style={[styles.courseCard, { backgroundColor: colors.card }]}>
               <View style={[styles.courseIcon, { backgroundColor: course.bg }]}>
-                <Ionicons name={course.icon as any} size={22} color={course.color} />
+                <BookOpen size={22} color={course.color} />
               </View>
               <View style={styles.courseMeta}>
                 <Text style={[styles.courseTitle, { color: colors.foreground }]}>{course.title}</Text>
                 <View style={styles.courseTags}>
-                  <View style={styles.courseTag}>
-                    <Ionicons name="laptop-outline" size={10} color={colors.mutedForeground} />
-                    <Text style={[styles.courseTagText, { color: colors.mutedForeground }]}>{course.platform}</Text>
-                  </View>
-                  <View style={styles.courseTag}>
-                    <Ionicons name="time-outline" size={10} color={colors.mutedForeground} />
-                    <Text style={[styles.courseTagText, { color: colors.mutedForeground }]}>{course.duration}</Text>
-                  </View>
-                  <View style={[styles.courseLevelTag, { backgroundColor: course.bg }]}>
-                    <Text style={[styles.courseLevelText, { color: course.color }]}>{course.level}</Text>
-                  </View>
+                  <View style={styles.courseTag}><Laptop size={10} color={colors.mutedForeground} /><Text style={[styles.courseTagText, { color: colors.mutedForeground }]}>{course.platform}</Text></View>
+                  <View style={styles.courseTag}><Clock size={10} color={colors.mutedForeground} /><Text style={[styles.courseTagText, { color: colors.mutedForeground }]}>{course.duration}</Text></View>
+                  <View style={[styles.courseLevelTag, { backgroundColor: course.bg }]}><Text style={[styles.courseLevelText, { color: course.color }]}>{course.level}</Text></View>
                 </View>
                 <View style={[styles.courseSkillTag, { backgroundColor: "#f0eeff" }]}>
                   <Text style={styles.courseSkillTagText}>Fills: {course.skill}</Text>
                 </View>
               </View>
               <TouchableOpacity style={[styles.startBtn, { backgroundColor: course.bg }]}>
-                <Ionicons name="arrow-forward" size={14} color={course.color} />
+                <ArrowRight size={14} color={course.color} />
               </TouchableOpacity>
             </View>
           ))}
         </View>
 
-        {/* CTA */}
-        <Pressable
-          style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.88 }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          }}
-        >
+        <Pressable style={({ pressed }) => [styles.ctaBtn, pressed && { opacity: 0.88 }]} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}>
           <LinearGradient colors={["#7c3aed", "#6d28d9"]} style={styles.ctaGradient}>
-            <Ionicons name="rocket-outline" size={18} color="#fff" />
+            <Rocket size={18} color="#fff" />
             <Text style={styles.ctaText}>Start Learning Path</Text>
           </LinearGradient>
         </Pressable>
@@ -260,7 +194,7 @@ const styles = StyleSheet.create({
   progressBarFill: { height: "100%", backgroundColor: "#7c3aed", borderRadius: 5 },
   targetMarker: { position: "absolute", top: -3, width: 2, height: 16, backgroundColor: "#10b981", borderRadius: 1 },
   sectionHead: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 4 },
-  sectionIconWrap: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#fef2f2", alignItems: "center", justifyContent: "center" },
+  sectionIconWrap: { width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center" },
   sectionTitle: { fontSize: 16, fontFamily: "Inter_700Bold" },
   missingSkillsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   missingSkill: { width: "47%", borderRadius: 14, padding: 14, shadowColor: "#1e1b4b", shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2 },

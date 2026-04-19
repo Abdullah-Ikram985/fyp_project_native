@@ -1,7 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import {
+  Camera,
+  ChevronRight,
+  Code2,
+  FileText,
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Settings,
+  User,
+  X,
+} from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Platform,
@@ -36,7 +50,6 @@ export default function EditProfileScreen() {
   const [bio, setBio] = useState("AI researcher and educator with 6+ years of experience in machine learning, NLP, and deep learning. Published 12 research papers in top-tier conferences.");
   const [skills, setSkills] = useState<string[]>(INITIAL_SKILLS);
   const [newSkill, setNewSkill] = useState("");
-
   const topInset = Platform.OS === "web" ? 67 : insets.top;
   const bottomInset = Platform.OS === "web" ? 34 : insets.bottom;
 
@@ -53,18 +66,15 @@ export default function EditProfileScreen() {
     }
   };
 
-  const removeSkill = (s: string) => {
-    setSkills(skills.filter((x) => x !== s));
-  };
+  const removeSkill = (s: string) => setSkills(skills.filter((x) => x !== s));
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      {/* Header */}
       <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={[styles.header, { paddingTop: topInset + 12 }]}>
         <View style={styles.headerDecor} />
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={22} color="rgba(196,181,253,0.9)" />
+            <ChevronRight size={22} color="rgba(196,181,253,0.9)" style={{ transform: [{ rotate: "180deg" }] }} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Profile</Text>
           <Pressable style={styles.saveBtn} onPress={handleSave}>
@@ -73,121 +83,83 @@ export default function EditProfileScreen() {
             </LinearGradient>
           </Pressable>
         </View>
-
-        {/* Avatar */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrap}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>{user?.profileInitials ?? "AR"}</Text>
             </View>
             <TouchableOpacity style={styles.cameraBtn}>
-              <Ionicons name="camera" size={14} color="#fff" />
+              <Camera size={14} color="#fff" />
             </TouchableOpacity>
           </View>
           <Text style={styles.avatarHint}>Tap to change photo</Text>
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomInset + 24 }]}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Personal Info */}
-        <SectionCard title="Personal Information" icon="person-outline" iconColor="#7c3aed" iconBg="#f0eeff" colors={colors}>
+      <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomInset + 24 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <SectionCard title="Personal Information" Icon={User} iconColor="#7c3aed" iconBg="#f0eeff" colors={colors}>
           <Field label="Full Name" value={name} onChangeText={setName} colors={colors} />
           <Field label="Title / Designation" value={title} onChangeText={setTitle} colors={colors} />
           <Field label="Current Institution" value={institution} onChangeText={setInstitution} colors={colors} />
           <Field label="Department" value={dept} onChangeText={setDept} colors={colors} last />
         </SectionCard>
 
-        {/* Contact */}
-        <SectionCard title="Contact Details" icon="mail-outline" iconColor="#3b82f6" iconBg="#eff6ff" colors={colors}>
-          <Field label="Email Address" value={email} onChangeText={setEmail} colors={colors} keyboardType="email-address" icon="mail-outline" />
-          <Field label="Phone Number" value={phone} onChangeText={setPhone} colors={colors} keyboardType="phone-pad" icon="call-outline" />
-          <Field label="City, Country" value={city} onChangeText={setCity} colors={colors} icon="location-outline" last />
+        <SectionCard title="Contact Details" Icon={Mail} iconColor="#3b82f6" iconBg="#eff6ff" colors={colors}>
+          <Field label="Email Address" value={email} onChangeText={setEmail} colors={colors} Icon={Mail} keyboardType="email-address" />
+          <Field label="Phone Number" value={phone} onChangeText={setPhone} colors={colors} Icon={Phone} keyboardType="phone-pad" />
+          <Field label="City, Country" value={city} onChangeText={setCity} colors={colors} Icon={MapPin} last />
         </SectionCard>
 
-        {/* Online Presence */}
-        <SectionCard title="Online Presence" icon="globe-outline" iconColor="#10b981" iconBg="#f0fdf4" colors={colors}>
-          <Field label="LinkedIn Profile" value={linkedin} onChangeText={setLinkedin} colors={colors} icon="logo-linkedin" />
-          <Field label="Personal Website" value={website} onChangeText={setWebsite} colors={colors} icon="globe-outline" last />
+        <SectionCard title="Online Presence" Icon={Globe} iconColor="#10b981" iconBg="#f0fdf4" colors={colors}>
+          <Field label="LinkedIn Profile" value={linkedin} onChangeText={setLinkedin} colors={colors} Icon={Linkedin} />
+          <Field label="Personal Website" value={website} onChangeText={setWebsite} colors={colors} Icon={Globe} last />
         </SectionCard>
 
-        {/* Skills */}
-        <SectionCard title="Skills" icon="code-slash-outline" iconColor="#f59e0b" iconBg="#fffbeb" colors={colors}>
+        <SectionCard title="Skills" Icon={Code2} iconColor="#f59e0b" iconBg="#fffbeb" colors={colors}>
           <View style={styles.skillsWrap}>
             {skills.map((s) => (
               <View key={s} style={styles.skillPill}>
                 <Text style={styles.skillText}>{s}</Text>
                 <TouchableOpacity onPress={() => removeSkill(s)} style={styles.skillRemove}>
-                  <Ionicons name="close" size={12} color="#7c3aed" />
+                  <X size={12} color="#7c3aed" />
                 </TouchableOpacity>
               </View>
             ))}
           </View>
           <View style={styles.addSkillRow}>
-            <TextInput
-              style={[styles.addSkillInput, { borderColor: colors.border, color: colors.foreground }]}
-              placeholder="Add a skill..."
-              placeholderTextColor={colors.mutedForeground}
-              value={newSkill}
-              onChangeText={setNewSkill}
-              onSubmitEditing={addSkill}
-              returnKeyType="done"
-            />
+            <TextInput style={[styles.addSkillInput, { borderColor: colors.border, color: colors.foreground }]} placeholder="Add a skill..." placeholderTextColor={colors.mutedForeground} value={newSkill} onChangeText={setNewSkill} onSubmitEditing={addSkill} returnKeyType="done" />
             <TouchableOpacity onPress={addSkill} style={styles.addSkillBtn}>
               <LinearGradient colors={["#7c3aed", "#6d28d9"]} style={styles.addSkillBtnGrad}>
-                <Ionicons name="add" size={18} color="#fff" />
+                <Plus size={18} color="#fff" />
               </LinearGradient>
             </TouchableOpacity>
           </View>
         </SectionCard>
 
-        {/* Bio */}
-        <SectionCard title="Professional Bio" icon="document-text-outline" iconColor="#ef4444" iconBg="#fef2f2" colors={colors}>
-          <TextInput
-            style={[styles.bioInput, { borderColor: colors.border, color: colors.foreground, backgroundColor: colors.background }]}
-            multiline
-            numberOfLines={5}
-            value={bio}
-            onChangeText={setBio}
-            textAlignVertical="top"
-            placeholder="Describe your academic background and research interests..."
-            placeholderTextColor={colors.mutedForeground}
-          />
+        <SectionCard title="Professional Bio" Icon={FileText} iconColor="#ef4444" iconBg="#fef2f2" colors={colors}>
+          <TextInput style={[styles.bioInput, { borderColor: colors.border, color: colors.foreground, backgroundColor: colors.background }]} multiline numberOfLines={5} value={bio} onChangeText={setBio} textAlignVertical="top" placeholder="Describe your academic background..." placeholderTextColor={colors.mutedForeground} />
           <Text style={[styles.bioCount, { color: colors.mutedForeground }]}>{bio.length} / 500</Text>
         </SectionCard>
 
-        {/* Preferences */}
-        <SectionCard title="Job Preferences" icon="options-outline" iconColor="#8b5cf6" iconBg="#f5f3ff" colors={colors}>
+        <SectionCard title="Job Preferences" Icon={Settings} iconColor="#8b5cf6" iconBg="#f5f3ff" colors={colors}>
           {[
             { label: "Preferred Roles", value: "Assistant / Associate Professor" },
             { label: "Preferred Subjects", value: "AI, ML, Data Science" },
             { label: "Job Type", value: "Full-time, Remote" },
             { label: "Expected Salary", value: "PKR 2,50,000 / month" },
           ].map((item, i, arr) => (
-            <TouchableOpacity
-              key={item.label}
-              style={[styles.prefItem, i < arr.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }]}
-            >
+            <TouchableOpacity key={item.label} style={[styles.prefItem, i < arr.length - 1 && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
               <View style={styles.prefMeta}>
                 <Text style={[styles.prefLabel, { color: colors.mutedForeground }]}>{item.label}</Text>
                 <Text style={[styles.prefValue, { color: colors.foreground }]}>{item.value}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={14} color={colors.mutedForeground} />
+              <ChevronRight size={14} color={colors.mutedForeground} />
             </TouchableOpacity>
           ))}
         </SectionCard>
 
-        {/* Save */}
-        <Pressable
-          style={({ pressed }) => [styles.saveFullBtn, pressed && { opacity: 0.88 }]}
-          onPress={handleSave}
-        >
+        <Pressable style={({ pressed }) => [styles.saveFullBtn, pressed && { opacity: 0.88 }]} onPress={handleSave}>
           <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={styles.saveFullGrad}>
-            <Ionicons name="checkmark-circle-outline" size={18} color="#fff" />
             <Text style={styles.saveFullText}>Save Changes</Text>
           </LinearGradient>
         </Pressable>
@@ -196,17 +168,11 @@ export default function EditProfileScreen() {
   );
 }
 
-function SectionCard({
-  title, icon, iconColor, iconBg, children, colors
-}: {
-  title: string; icon: string; iconColor: string; iconBg: string; children: React.ReactNode; colors: any;
-}) {
+function SectionCard({ title, Icon, iconColor, iconBg, children, colors }: { title: string; Icon: any; iconColor: string; iconBg: string; children: React.ReactNode; colors: any }) {
   return (
     <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>
       <View style={styles.sectionHeader}>
-        <View style={[styles.sectionIconWrap, { backgroundColor: iconBg }]}>
-          <Ionicons name={icon as any} size={16} color={iconColor} />
-        </View>
+        <View style={[styles.sectionIconWrap, { backgroundColor: iconBg }]}><Icon size={16} color={iconColor} /></View>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{title}</Text>
       </View>
       {children}
@@ -214,22 +180,13 @@ function SectionCard({
   );
 }
 
-function Field({
-  label, value, onChangeText, colors, icon, keyboardType, last
-}: {
-  label: string; value: string; onChangeText: (v: string) => void; colors: any; icon?: string; keyboardType?: any; last?: boolean;
-}) {
+function Field({ label, value, onChangeText, colors, Icon, keyboardType, last }: { label: string; value: string; onChangeText: (v: string) => void; colors: any; Icon?: any; keyboardType?: any; last?: boolean }) {
   return (
     <View style={[styles.fieldGroup, !last && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
       <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>{label}</Text>
       <View style={styles.fieldInputRow}>
-        {icon && <Ionicons name={icon as any} size={15} color={colors.mutedForeground} style={{ marginRight: 8 }} />}
-        <TextInput
-          style={[styles.fieldInput, { color: colors.foreground }]}
-          value={value}
-          onChangeText={onChangeText}
-          keyboardType={keyboardType ?? "default"}
-        />
+        {Icon && <Icon size={15} color={colors.mutedForeground} style={{ marginRight: 8 }} />}
+        <TextInput style={[styles.fieldInput, { color: colors.foreground }]} value={value} onChangeText={onChangeText} keyboardType={keyboardType ?? "default"} />
       </View>
     </View>
   );

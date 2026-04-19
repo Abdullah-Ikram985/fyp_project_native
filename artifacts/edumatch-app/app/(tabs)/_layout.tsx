@@ -1,9 +1,9 @@
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
+import { Briefcase, CircleUserRound, FileText, Home } from "lucide-react-native";
 import React from "react";
 import { Platform, StyleSheet, View, useColorScheme } from "react-native";
 
@@ -74,7 +74,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name={focused ? "house.fill" : "house"} tintColor={color} size={24} />
             ) : (
-              <Ionicons name={focused ? "home" : "home-outline"} size={22} color={color} />
+              <Home size={22} color={color} fill={focused ? color : "none"} />
             ),
         }}
       />
@@ -86,7 +86,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name={focused ? "briefcase.fill" : "briefcase"} tintColor={color} size={24} />
             ) : (
-              <Ionicons name={focused ? "briefcase" : "briefcase-outline"} size={22} color={color} />
+              <Briefcase size={22} color={color} fill={focused ? color : "none"} />
             ),
         }}
       />
@@ -98,7 +98,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name={focused ? "doc.text.fill" : "doc.text"} tintColor={color} size={24} />
             ) : (
-              <Ionicons name={focused ? "document-text" : "document-text-outline"} size={22} color={color} />
+              <FileText size={22} color={color} fill={focused ? color : "none"} />
             ),
         }}
       />
@@ -110,7 +110,7 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name={focused ? "person.circle.fill" : "person.circle"} tintColor={color} size={24} />
             ) : (
-              <Ionicons name={focused ? "person-circle" : "person-circle-outline"} size={22} color={color} />
+              <CircleUserRound size={22} color={color} fill={focused ? color : "none"} />
             ),
         }}
       />

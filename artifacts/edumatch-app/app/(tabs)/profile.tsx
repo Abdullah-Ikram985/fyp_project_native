@@ -1,7 +1,20 @@
-import { Ionicons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import {
+  Briefcase,
+  ChevronRight,
+  Code2,
+  Eye,
+  FileText,
+  GraduationCap,
+  LogOut,
+  Pencil,
+  School,
+  Sparkles,
+  TrendingUp,
+  Upload,
+  User,
+} from "lucide-react-native";
 import React from "react";
 import {
   Alert,
@@ -28,35 +41,21 @@ export default function ProfileScreen() {
   const handleSignOut = () => {
     Alert.alert("Sign Out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
-      {
-        text: "Sign Out",
-        style: "destructive",
-        onPress: async () => {
-          await signOut();
-          router.replace("/(auth)");
-        },
-      },
+      { text: "Sign Out", style: "destructive", onPress: async () => { await signOut(); router.replace("/(auth)"); } },
     ]);
   };
 
   return (
-    <ScrollView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      contentContainerStyle={{ paddingBottom: 120 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Header */}
+    <ScrollView style={[styles.root, { backgroundColor: colors.background }]} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
       <LinearGradient colors={["#1e1b4b", "#2e1a6e"]} style={[styles.header, { paddingTop: topInset + 12 }]}>
         <View style={styles.headerDecor} />
         <View style={styles.headerRow}>
           <Text style={styles.headerTitle}>Profile</Text>
           <TouchableOpacity onPress={() => router.push("/edit-profile")} style={styles.editBtn}>
-            <Ionicons name="create-outline" size={18} color="rgba(196,181,253,0.9)" />
+            <Pencil size={15} color="rgba(196,181,253,0.9)" />
             <Text style={styles.editBtnText}>Edit</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Avatar & Info */}
         <View style={styles.avatarSection}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{user?.profileInitials ?? "AR"}</Text>
@@ -64,21 +63,18 @@ export default function ProfileScreen() {
           <Text style={styles.userName}>{user?.name ?? "Dr. Aisha Raza"}</Text>
           <Text style={styles.userTitle}>{user?.title ?? "Assistant Professor"}</Text>
           <Text style={styles.userInstitution}>{user?.institution ?? "IISAT University"}</Text>
-
-          {/* Match Score */}
           <View style={styles.scoreRow}>
-            <Ionicons name="sparkles" size={14} color="#a855f7" />
+            <Sparkles size={14} color="#a855f7" />
             <Text style={styles.scoreText}>AI Match Score: {user?.matchScore ?? 87}%</Text>
           </View>
         </View>
       </LinearGradient>
 
-      {/* Stats */}
       <View style={[styles.statsCard, { backgroundColor: colors.card }]}>
         {[
-          { label: "Applications", value: "4", icon: "document-text" },
-          { label: "Saved Jobs", value: "12", icon: "bookmark" },
-          { label: "Profile Views", value: "28", icon: "eye" },
+          { label: "Applications", value: "4" },
+          { label: "Saved Jobs", value: "12" },
+          { label: "Profile Views", value: "28" },
         ].map((s, i) => (
           <React.Fragment key={s.label}>
             <View style={styles.statItem}>
@@ -90,28 +86,24 @@ export default function ProfileScreen() {
         ))}
       </View>
 
-      {/* Skills */}
       <View style={[styles.section, { backgroundColor: colors.card }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionIconWrap}>
-            <Ionicons name="code-slash" size={16} color="#7c3aed" />
+          <View style={[styles.sectionIconWrap, { backgroundColor: "#f0eeff" }]}>
+            <Code2 size={16} color="#7c3aed" />
           </View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Skills</Text>
         </View>
         <View style={styles.skillsWrap}>
           {SKILLS.map((s) => (
-            <View key={s} style={styles.skillPill}>
-              <Text style={styles.skillText}>{s}</Text>
-            </View>
+            <View key={s} style={styles.skillPill}><Text style={styles.skillText}>{s}</Text></View>
           ))}
         </View>
       </View>
 
-      {/* Education */}
       <View style={[styles.section, { backgroundColor: colors.card }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.sectionIconWrap}>
-            <Ionicons name="school" size={16} color="#7c3aed" />
+          <View style={[styles.sectionIconWrap, { backgroundColor: "#f0eeff" }]}>
+            <GraduationCap size={16} color="#7c3aed" />
           </View>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Education</Text>
         </View>
@@ -120,8 +112,8 @@ export default function ProfileScreen() {
           { degree: "MS Artificial Intelligence", uni: "LUMS", year: "2015" },
         ].map((e) => (
           <View key={e.degree} style={[styles.eduItem, { borderColor: colors.border }]}>
-            <View style={styles.eduIcon}>
-              <Ionicons name="school-outline" size={18} color="#7c3aed" />
+            <View style={[styles.eduIcon, { backgroundColor: "#f0eeff" }]}>
+              <School size={18} color="#7c3aed" />
             </View>
             <View style={styles.eduMeta}>
               <Text style={[styles.eduDegree, { color: colors.foreground }]}>{e.degree}</Text>
@@ -131,33 +123,24 @@ export default function ProfileScreen() {
         ))}
       </View>
 
-      {/* Quick Links */}
       <View style={[styles.section, { backgroundColor: colors.card }]}>
         {[
-          { label: "Career Roadmap", icon: "trending-up-outline", route: "/career-roadmap", color: "#7c3aed", bg: "#f0eeff" },
-          { label: "Resume Upload", icon: "cloud-upload-outline", route: "/resume-upload", color: "#3b82f6", bg: "#eff6ff" },
-          { label: "Edit Profile", icon: "create-outline", route: "/edit-profile", color: "#10b981", bg: "#f0fdf4" },
+          { label: "Career Roadmap", Icon: TrendingUp, route: "/career-roadmap", color: "#7c3aed", bg: "#f0eeff" },
+          { label: "Resume Upload", Icon: Upload, route: "/resume-upload", color: "#3b82f6", bg: "#eff6ff" },
+          { label: "Edit Profile", Icon: Pencil, route: "/edit-profile", color: "#10b981", bg: "#f0fdf4" },
         ].map((link) => (
-          <TouchableOpacity
-            key={link.label}
-            style={[styles.linkItem, { borderBottomColor: colors.border }]}
-            onPress={() => router.push(link.route as any)}
-          >
+          <TouchableOpacity key={link.label} style={[styles.linkItem, { borderBottomColor: colors.border }]} onPress={() => router.push(link.route as any)}>
             <View style={[styles.linkIcon, { backgroundColor: link.bg }]}>
-              <Ionicons name={link.icon as any} size={18} color={link.color} />
+              <link.Icon size={18} color={link.color} />
             </View>
             <Text style={[styles.linkLabel, { color: colors.foreground }]}>{link.label}</Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.mutedForeground} />
+            <ChevronRight size={16} color={colors.mutedForeground} />
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Sign Out */}
-      <TouchableOpacity
-        style={[styles.signOutBtn, { backgroundColor: colors.card, borderColor: "#fecaca" }]}
-        onPress={handleSignOut}
-      >
-        <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+      <TouchableOpacity style={[styles.signOutBtn, { backgroundColor: colors.card, borderColor: "#fecaca" }]} onPress={handleSignOut}>
+        <LogOut size={18} color="#ef4444" />
         <Text style={styles.signOutText}>Sign Out</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -187,13 +170,13 @@ const styles = StyleSheet.create({
   statDivider: { width: 1, height: "80%" },
   section: { marginHorizontal: 16, marginTop: 12, borderRadius: 18, padding: 16, shadowColor: "#1e1b4b", shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   sectionHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 },
-  sectionIconWrap: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#f0eeff", alignItems: "center", justifyContent: "center" },
+  sectionIconWrap: { width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center" },
   sectionTitle: { fontSize: 15, fontFamily: "Inter_700Bold" },
   skillsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   skillPill: { backgroundColor: "#ede9fe", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 },
   skillText: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: "#7c3aed" },
   eduItem: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderBottomWidth: 1 },
-  eduIcon: { width: 36, height: 36, borderRadius: 12, backgroundColor: "#f0eeff", alignItems: "center", justifyContent: "center" },
+  eduIcon: { width: 36, height: 36, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   eduMeta: { flex: 1 },
   eduDegree: { fontSize: 13, fontFamily: "Inter_700Bold", marginBottom: 2 },
   eduUni: { fontSize: 11, fontFamily: "Inter_400Regular" },
