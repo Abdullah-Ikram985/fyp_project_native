@@ -25,9 +25,12 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(recruiter)" options={{ headerShown: false }} />
       <Stack.Screen name="resume-upload" options={{ headerShown: false, presentation: "modal" }} />
       <Stack.Screen name="career-roadmap" options={{ headerShown: false, presentation: "modal" }} />
       <Stack.Screen name="edit-profile" options={{ headerShown: false, presentation: "modal" }} />
+      <Stack.Screen name="post-job" options={{ headerShown: false, presentation: "modal" }} />
+      <Stack.Screen name="candidate-detail" options={{ headerShown: false, presentation: "modal" }} />
     </Stack>
   );
 }
@@ -41,9 +44,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
+    if (fontsLoaded || fontError) SplashScreen.hideAsync();
   }, [fontsLoaded, fontError]);
 
   if (!fontsLoaded && !fontError) return null;

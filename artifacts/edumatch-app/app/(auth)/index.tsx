@@ -36,7 +36,7 @@ export default function SplashScreen() {
 
   const handleGetStarted = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push("/(auth)/login");
+    router.push("/(auth)/role-select");
   };
 
   const topInset = Platform.OS === "web" ? 67 : insets.top;

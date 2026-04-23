@@ -1,8 +1,9 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   AlertCircle,
+  Building2,
   ChevronLeft,
   Eye,
   EyeOff,
@@ -27,15 +28,17 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAuth } from "@/contexts/AuthContext";
-import { useColors } from "@/hooks/useColors";
+import { useAuth, type UserRole } from "@/contexts/AuthContext";
 
 export default function LoginScreen() {
-  const colors = useColors();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ role?: string }>();
+  const role: UserRole = params.role === "recruiter" ? "recruiter" : "candidate";
+  const isRecruiter = role === "recruiter";
   const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<"signin" | "register">("signin");
   const [name, setName] = useState("");
+  const [organization, setOrganization] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,15 +48,22 @@ export default function LoginScreen() {
   const topInset = Platform.OS === "web" ? 67 : insets.top;
   const bottomInset = Platform.OS === "web" ? 34 : insets.bottom;
 
+  const goToApp = () => {
+    if (isRecruiter) router.replace("/(recruiter)" as any);
+    else router.replace("/(tabs)");
+  };
+
   const handleSubmit = async () => {
     setError("");
     if (!email.trim() || !password.trim()) { setError("Please fill in all fields"); return; }
     if (mode === "register" && !name.trim()) { setError("Please enter your name"); return; }
+    if (mode === "register" && isRecruiter && !organization.trim()) { setError("Please enter your organization"); return; }
     setLoading(true);
     try {
-      if (mode === "signin") { await signIn(email, password); } else { await signUp(name, email, password); }
+      if (mode === "signin") await signIn(email, password, role);
+      else await signUp(name, email, password, role, { organization });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.replace("/(tabs)");
+      goToApp();
     } catch { setError("Something went wrong. Please try again."); } finally { setLoading(false); }
   };
 
@@ -65,14 +75,22 @@ export default function LoginScreen() {
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.logoSmall}>
-            <LinearGradient colors={["#7c3aed", "#a855f7"]} style={styles.logoSmallGradient}>
-              <GraduationCap size={18} color="#fff" />
+            <LinearGradient colors={isRecruiter ? ["#10b981", "#059669"] : ["#7c3aed", "#a855f7"]} style={styles.logoSmallGradient}>
+              {isRecruiter ? <Building2 size={18} color="#fff" /> : <GraduationCap size={18} color="#fff" />}
             </LinearGradient>
           </View>
           <Text style={styles.headerTitle}>EduMatch AI</Text>
         </View>
+        <View style={styles.roleBadgeRow}>
+          <View style={[styles.roleBadge, isRecruiter && { backgroundColor: "rgba(16,185,129,0.2)" }]}>
+            <Text style={[styles.roleBadgeText, isRecruiter && { color: "#86efac" }]}>{isRecruiter ? "Recruiter" : "Candidate"}</Text>
+          </View>
+          <TouchableOpacity onPress={() => router.replace("/(auth)/role-select")}>
+            <Text style={styles.changeLink}>Change</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.headerSubtitle}>
-          {mode === "signin" ? "Welcome back, scholar" : "Join thousands of faculty candidates"}
+          {mode === "signin" ? "Welcome back" : isRecruiter ? "Start hiring top faculty" : "Join thousands of faculty candidates"}
         </Text>
       </LinearGradient>
 
@@ -88,10 +106,20 @@ export default function LoginScreen() {
         <View style={styles.form}>
           {mode === "register" && (
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Full Name</Text>
+              <Text style={styles.fieldLabel}>{isRecruiter ? "Your Name" : "Full Name"}</Text>
               <View style={styles.inputWrap}>
                 <User size={18} color="#8b7dc0" style={styles.inputIcon} />
-                <TextInput style={styles.input} placeholder="Dr. Your Name" placeholderTextColor="#c4b5fd" value={name} onChangeText={setName} autoCapitalize="words" />
+                <TextInput style={styles.input} placeholder={isRecruiter ? "Sarah Mitchell" : "Dr. Your Name"} placeholderTextColor="#c4b5fd" value={name} onChangeText={setName} autoCapitalize="words" />
+              </View>
+            </View>
+          )}
+
+          {mode === "register" && isRecruiter && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Organization / Institution</Text>
+              <View style={styles.inputWrap}>
+                <Building2 size={18} color="#8b7dc0" style={styles.inputIcon} />
+                <TextInput style={styles.input} placeholder="Stanford University" placeholderTextColor="#c4b5fd" value={organization} onChangeText={setOrganization} autoCapitalize="words" />
               </View>
             </View>
           )}
@@ -100,7 +128,7 @@ export default function LoginScreen() {
             <Text style={styles.fieldLabel}>Email Address</Text>
             <View style={styles.inputWrap}>
               <Mail size={18} color="#8b7dc0" style={styles.inputIcon} />
-              <TextInput style={styles.input} placeholder="you@university.edu" placeholderTextColor="#c4b5fd" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
+              <TextInput style={styles.input} placeholder={isRecruiter ? "you@institution.edu" : "you@university.edu"} placeholderTextColor="#c4b5fd" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
             </View>
           </View>
 
@@ -127,7 +155,7 @@ export default function LoginScreen() {
           )}
 
           <Pressable style={({ pressed }) => [styles.submitBtn, pressed && { opacity: 0.88 }]} onPress={handleSubmit} disabled={loading}>
-            <LinearGradient colors={["#7c3aed", "#6d28d9"]} style={styles.submitGradient}>
+            <LinearGradient colors={isRecruiter ? ["#10b981", "#059669"] : ["#7c3aed", "#6d28d9"]} style={styles.submitGradient}>
               {loading ? <ActivityIndicator color="#fff" size="small" /> : <Text style={styles.submitText}>{mode === "signin" ? "Sign In" : "Create Account"}</Text>}
             </LinearGradient>
           </Pressable>
@@ -138,7 +166,7 @@ export default function LoginScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity style={styles.socialBtn} onPress={() => router.replace("/(tabs)")}>
+          <TouchableOpacity style={styles.socialBtn} onPress={goToApp}>
             <Globe size={20} color="#1e1b4b" />
             <Text style={styles.socialBtnText}>Continue with Google</Text>
           </TouchableOpacity>
@@ -154,12 +182,16 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#f8f7ff" },
-  header: { paddingHorizontal: 24, paddingBottom: 32 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.08)", alignItems: "center", justifyContent: "center", marginBottom: 20 },
-  headerContent: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 8 },
+  header: { paddingHorizontal: 24, paddingBottom: 28 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.08)", alignItems: "center", justifyContent: "center", marginBottom: 18 },
+  headerContent: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10 },
   logoSmall: {},
   logoSmallGradient: { width: 32, height: 32, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   headerTitle: { fontSize: 22, fontFamily: "Inter_700Bold", color: "#ffffff" },
+  roleBadgeRow: { flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 6 },
+  roleBadge: { backgroundColor: "rgba(167,139,250,0.2)", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  roleBadgeText: { fontSize: 11, fontFamily: "Inter_700Bold", color: "#c4b5fd" },
+  changeLink: { fontSize: 12, color: "rgba(196,181,253,0.7)", fontFamily: "Inter_500Medium", textDecorationLine: "underline" },
   headerSubtitle: { fontSize: 14, color: "rgba(196,181,253,0.8)", fontFamily: "Inter_400Regular" },
   body: { flex: 1 },
   bodyContent: { padding: 24 },

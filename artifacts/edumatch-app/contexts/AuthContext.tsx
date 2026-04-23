@@ -1,27 +1,33 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
+export type UserRole = "candidate" | "recruiter";
+
 interface User {
+  role: UserRole;
   name: string;
   email: string;
   title: string;
   institution: string;
   matchScore: number;
   profileInitials: string;
+  organization?: string;
+  recruiterTitle?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string, role?: UserRole) => Promise<void>;
+  signUp: (name: string, email: string, password: string, role?: UserRole, extra?: { organization?: string }) => Promise<void>;
   signOut: () => Promise<void>;
   updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const MOCK_USER: User = {
+const MOCK_CANDIDATE: User = {
+  role: "candidate",
   name: "Dr. Aisha Raza",
   email: "aisha.raza@iisat.edu.pk",
   title: "Assistant Professor",
@@ -30,37 +36,45 @@ const MOCK_USER: User = {
   profileInitials: "AR",
 };
 
+const MOCK_RECRUITER: User = {
+  role: "recruiter",
+  name: "Sarah Mitchell",
+  email: "sarah@stanford.edu",
+  title: "HR Director",
+  institution: "Stanford University",
+  organization: "Stanford University",
+  recruiterTitle: "HR Director",
+  matchScore: 0,
+  profileInitials: "SM",
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     AsyncStorage.getItem("auth_user").then((stored) => {
-      if (stored) {
-        setUser(JSON.parse(stored));
-      }
+      if (stored) setUser(JSON.parse(stored));
       setIsLoading(false);
     });
   }, []);
 
-  const signIn = async (_email: string, _password: string) => {
-    setUser(MOCK_USER);
-    await AsyncStorage.setItem("auth_user", JSON.stringify(MOCK_USER));
+  const signIn = async (_email: string, _password: string, role: UserRole = "candidate") => {
+    const mock = role === "recruiter" ? MOCK_RECRUITER : MOCK_CANDIDATE;
+    setUser(mock);
+    await AsyncStorage.setItem("auth_user", JSON.stringify(mock));
   };
 
-  const signUp = async (name: string, email: string, _password: string) => {
-    const initials = name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  const signUp = async (name: string, email: string, _password: string, role: UserRole = "candidate", extra?: { organization?: string }) => {
+    const initials = name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    const base = role === "recruiter" ? MOCK_RECRUITER : MOCK_CANDIDATE;
     const newUser: User = {
-      ...MOCK_USER,
+      ...base,
       name,
       email,
       profileInitials: initials,
-      matchScore: 42,
+      matchScore: role === "candidate" ? 42 : 0,
+      organization: extra?.organization ?? base.organization,
     };
     setUser(newUser);
     await AsyncStorage.setItem("auth_user", JSON.stringify(newUser));
