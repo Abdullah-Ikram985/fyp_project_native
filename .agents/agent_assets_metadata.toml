@@ -1,8 +1,0 @@
-uploads = []
-outputs = []
-
-[[generated]]
-id = "uC2WLotso-2Ph9gYBSqQg"
-uri = "file://artifacts/edumatch-app/assets/images/icon.png"
-type = "image"
-title = "EduMatch AI app icon"
