@@ -1,3 +1,5 @@
+modules = ["nodejs-20"]
+
 [[ports]]
 localPort = 8080
 externalPort = 8080
@@ -17,3 +19,6 @@ externalPort = 3000
 [[ports]]
 localPort = 22054
 externalPort = 3002
+
+[workflows]
+runButton = "Project"
